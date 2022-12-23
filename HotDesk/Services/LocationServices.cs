@@ -55,7 +55,7 @@ namespace HotDesk.Services
             return locationDto;
         }
 
-        public int CreateLocation(AddLocationDto dto) //add admin authorization
+        public int CreateLocation(AddLocationDto dto)
         {
             var location = _mapper.Map<Location>(dto);
             _dbContext.Locations.Add(location);
@@ -64,7 +64,7 @@ namespace HotDesk.Services
             return location.Id;
         }
 
-        public void DeleteLocation(int id) //add admin authorization
+        public void DeleteLocation(int id)
         {
             var location = _dbContext.Locations
                 .Include(location => location.Desks)
