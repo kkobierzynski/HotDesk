@@ -13,9 +13,15 @@ namespace HotDesk.Controllers
 
         public AccountController(IAccountServices accountServices)
         {
-            accountServices = _accountServices;
+            _accountServices = accountServices;
         }
 
+        [HttpPost("create")]
+        public ActionResult CreateAccount([FromBody] CreateUserDto dto)
+        {
+            _accountServices.CreateUser(dto);
+            return Ok();
+        }
 
         [HttpPost("login")]
         public ActionResult Login([FromBody] LoginUserDto dto)
