@@ -45,7 +45,7 @@ namespace HotDesk.Services
 
         }
 
-        public int CreateDesk(int locationId, AddDeskDto dto) // add Admin authorization
+        public int CreateDesk(int locationId, AddDeskDto dto)
         {
             var location = _dbContext.Locations.FirstOrDefault(location => location.Id == locationId);
             if (location == null)
@@ -62,7 +62,7 @@ namespace HotDesk.Services
             return deskDto.Id;
         }
 
-        public void DeleteDesk(int locationId, int deskId) //add admin authorization, after creating reservation actions make exception if desk is reserved
+        public void DeleteDesk(int locationId, int deskId)
         {
             var location = _dbContext.Locations
                 .Include(location => location.Desks)
@@ -80,8 +80,8 @@ namespace HotDesk.Services
                 throw new NotFoundException("Desk not found");
             }
 
-            //bool isReserved =
-            if (false)
+            var isReserved = _dbContext.Reservations.Any(reservation => reservation.DeskId == desk.Id); //Check in Postman
+            if (isReserved)
             {
                 throw new ConflictException("Cannot delele desk that is reserved");
             }
