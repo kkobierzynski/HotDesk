@@ -13,6 +13,8 @@ namespace HotDesk
 
             CreateMap<AddLocationDto, Location>();
             CreateMap<AddDeskDto, Desk>();
+
+            CreateMap<CreateUserDto, User>();
         }
     }
 }
