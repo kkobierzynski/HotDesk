@@ -1,12 +1,14 @@
 ﻿using HotDesk.Entities;
 using HotDesk.Models;
 using HotDesk.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotDesk.Controllers
 {
     [Route("api/location")]
     [ApiController]
+    [Authorize]
     public class LocationController : ControllerBase
     {
         private readonly ILocationServices _locationServices;
@@ -30,6 +32,7 @@ namespace HotDesk.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public ActionResult AddLocation(AddLocationDto dto)
         {
             var locationId = _locationServices.CreateLocation(dto);
@@ -37,6 +40,7 @@ namespace HotDesk.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrator")]
         public ActionResult DeleteLocation(int id)
         {
             _locationServices.DeleteLocation(id);

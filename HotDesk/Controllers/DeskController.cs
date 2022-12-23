@@ -1,11 +1,13 @@
 ﻿using HotDesk.Models;
 using HotDesk.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotDesk.Controllers
 {
     [Route("api/location/{id}/desk")]
     [ApiController]
+    [Authorize]
     public class DeskController : ControllerBase
     {
         private readonly IDeskServices _deskServices;
@@ -23,6 +25,7 @@ namespace HotDesk.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public ActionResult AddDesk([FromRoute] int id, [FromBody] AddDeskDto dto)
         {
             int deskId = _deskServices.CreateDesk(id, dto);
@@ -30,6 +33,7 @@ namespace HotDesk.Controllers
         }
 
         [HttpDelete("{deskId}")]
+        [Authorize(Roles = "Administrator")]
         public ActionResult DeleteDesk([FromRoute] int id, [FromRoute] int deskId)
         {
             _deskServices.DeleteDesk(id, deskId);
