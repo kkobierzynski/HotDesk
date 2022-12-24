@@ -15,6 +15,11 @@ namespace HotDesk.Middleware
                 context.Response.StatusCode = 400;
                 await context.Response.WriteAsync(e.Message);
             }
+            catch (ForbiddenException e)
+            {
+                context.Response.StatusCode = 403;
+                await context.Response.WriteAsync(e.Message);
+            }
             catch (NotFoundException e)
             {
                 context.Response.StatusCode = 404;
