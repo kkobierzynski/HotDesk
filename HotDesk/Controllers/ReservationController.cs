@@ -16,11 +16,25 @@ namespace HotDesk.Controllers
             _reservationServices = reservationServices;
         }
 
+        [HttpGet("{id}")]
+        public ActionResult GetReservation([FromRoute] int id)
+        {
+            var reservation = _reservationServices.GetReservationById(id);
+            return Ok(reservation);
+        }
+
         [HttpPost]
         public ActionResult Reservation([FromBody] DeskBookDto dto)
         {
             int reservationId = _reservationServices.MakeReservation(dto);
             return Created($"api/reservation/{reservationId}", null);
+        }
+
+        [HttpPut("{id}")]
+        public ActionResult ChangeReservation([FromRoute] int id, [FromBody] DeskBookDto dto)
+        {
+            _reservationServices.Update(id, dto);
+            return Ok();
         }
     }
 }

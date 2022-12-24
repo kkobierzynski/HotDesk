@@ -9,6 +9,8 @@ namespace HotDesk.Services
     public interface IReservationServices
     {
         int MakeReservation(DeskBookDto dto);
+        DeskBookDto GetReservationById(int id);
+        void Update(int id, DeskBookDto dto);
     }
 
     public class ReservationServices : IReservationServices
@@ -22,6 +24,47 @@ namespace HotDesk.Services
             _contextAccesor = contextAccesor;
             _dbContext = dbContext;
             _mapper = mapper;
+        }
+
+        public DeskBookDto GetReservationById(int id)
+        {
+            var reservation = _dbContext.Reservations.FirstOrDefault(res => res.Id == id);
+
+            if (reservation == null)
+            {
+                throw new NotFoundException("Reservation not found");
+            }
+
+            var reservationDto = _mapper.Map<DeskBookDto>(reservation);
+            return reservationDto;
+        }
+
+        public void Update(int id, DeskBookDto dto)
+        {
+            var reservation = _dbContext.Reservations.FirstOrDefault(res => res.Id == id);
+            
+            if(reservation == null)
+            {
+                throw new NotFoundException("Desk reservation not found");
+            }
+
+            if (reservation.UserId != _contextAccesor.UserId)
+            {
+                throw new ForbiddenException("You are not allowed to change this reservation");
+            }
+
+            TimeSpan span = reservation.StartDate - DateTime.Now;
+            if (span.TotalHours < 24)
+            {
+                throw new ConflictException("Cannot change reservation later than 24 hours before made reservation");
+            }
+
+            reservation.LocationId = dto.LocationId;
+            reservation.DeskId = dto.DeskId;
+            reservation.StartDate = dto.StartDate;
+            reservation.EndDate = dto.EndDate;
+
+            _dbContext.SaveChanges();
         }
 
         public int MakeReservation(DeskBookDto dto)
