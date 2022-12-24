@@ -15,6 +15,8 @@ namespace HotDesk
             CreateMap<AddDeskDto, Desk>();
 
             CreateMap<CreateUserDto, User>();
+
+            CreateMap<DeskBookDto, Reservation>();
         }
     }
 }

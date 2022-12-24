@@ -51,7 +51,7 @@ builder.Services.AddScoped<HotDeskSeeder>();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
 builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserDtoValidator>();
-builder.Services.AddScoped<IValidator<DeskOneDayBookDto>, DeskOneDayBookDtoValidator>();
+builder.Services.AddScoped<IValidator<DeskBookDto>, DeskBookDtoValidator>();
 
 builder.Services.AddScoped<IUserContextAccesorService, UserContextAccesorService>();
 builder.Services.AddHttpContextAccessor();

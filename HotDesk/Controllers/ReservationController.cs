@@ -16,10 +16,10 @@ namespace HotDesk.Controllers
             _reservationServices = reservationServices;
         }
 
-        [HttpPost("oneday")]
-        public ActionResult OneDayReservation([FromBody] DeskOneDayBookDto dto)
+        [HttpPost]
+        public ActionResult Reservation([FromBody] DeskBookDto dto)
         {
-            int reservationId = _reservationServices.MakeOneDayReservation(dto);
+            int reservationId = _reservationServices.MakeReservation(dto);
             return Created($"api/reservation/{reservationId}", null);
         }
     }
