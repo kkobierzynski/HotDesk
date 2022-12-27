@@ -52,6 +52,7 @@ builder.Services.AddScoped<HotDeskSeeder>();
 
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
+builder.Services.AddScoped<IValidator<AvailableDeskCheckDto>, AvailableDeskCheckDtoValidator>();
 builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserDtoValidator>();
 builder.Services.AddScoped<IValidator<DeskBookDto>, DeskBookDtoValidator>();
 

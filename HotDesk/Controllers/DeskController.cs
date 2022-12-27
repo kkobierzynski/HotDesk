@@ -16,10 +16,10 @@ namespace HotDesk.Controllers
         {
             _deskServices = deskServices;
         }
-        [HttpGet("/api/location/all/desk")]
-        public ActionResult<IEnumerable<DeskBookDto>> GetAvailableUnavailableDesk([FromQuery] string availability)
+        [HttpGet()]
+        public ActionResult<IEnumerable<DeskBookDto>> GetAvailableUnavailableDesk([FromRoute] int id, [FromBody] AvailableDeskCheckDto dto)
         {
-            var deskDto = _deskServices.AvailableUnavailableDesk(availability);
+            var deskDto = _deskServices.AvailableUnavailableDesk(id, dto);
             return Ok(deskDto);
         }
 

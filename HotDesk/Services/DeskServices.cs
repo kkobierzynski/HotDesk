@@ -11,7 +11,7 @@ namespace HotDesk.Services
         DeskDto GetDeskById(int locationId, int deskId);
         int CreateDesk(int locationId, AddDeskDto dto);
         void DeleteDesk(int locationId, int deskId);
-        IEnumerable<DeskDto> AvailableUnavailableDesk(string availability);
+        IEnumerable<DeskDto> AvailableUnavailableDesk(int locationId, AvailableDeskCheckDto dto);
     }
     public class DeskServices : IDeskServices
     {
@@ -22,21 +22,27 @@ namespace HotDesk.Services
             _dbContext = dbContext;
             _mapper = mapper;
         }
-        public IEnumerable<DeskDto> AvailableUnavailableDesk(string availability)
+        public IEnumerable<DeskDto> AvailableUnavailableDesk(int locationId, AvailableDeskCheckDto dto)
         {
-            var date = DateTime.Now;
-            date = new DateTime(date.Year, date.Month, date.Day);
-            var reservedIds = _dbContext.Reservations.Where(res => res.EndDate >= date).Select(res => res.DeskId).Distinct();
-
-            if (string.Equals(availability, "available", StringComparison.CurrentCultureIgnoreCase))
+            var location = _dbContext.Locations.FirstOrDefault(loc => loc.Id ==locationId);
+            if (location == null)
             {
-                var desks = _dbContext.Desks.Where(x => !reservedIds.Contains(x.Id));
+                throw new NotFoundException("Location not found");
+            }
+            var reservedIds = _dbContext.Reservations.Where(res => res.LocationId == locationId && 
+                                                            res.StartDate <= dto.checkDate &&
+                                                            res.EndDate >= dto.checkDate)
+                                                     .Select(res => res.DeskId).Distinct();
+
+            if (string.Equals(dto.availability, "available", StringComparison.CurrentCultureIgnoreCase))
+            {
+                var desks = _dbContext.Desks.Where(x => !reservedIds.Contains(x.Id) && x.LocationId == locationId);
                 var desksDto = _mapper.Map<List<DeskDto>>(desks);
                 return desksDto;
             }
-            else if (string.Equals(availability, "unavailable", StringComparison.CurrentCultureIgnoreCase))
+            else if (string.Equals(dto.availability, "unavailable", StringComparison.CurrentCultureIgnoreCase))
             {
-                var desks = _dbContext.Desks.Where(x => reservedIds.Contains(x.Id));
+                var desks = _dbContext.Desks.Where(x => reservedIds.Contains(x.Id) && x.LocationId == locationId);
                 var desksDto = _mapper.Map<List<DeskDto>>(desks);
                 return desksDto;
             }
