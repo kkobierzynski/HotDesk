@@ -18,9 +18,9 @@ namespace HotDesk.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<LocationDto>> GetDesksByLocalization()
+        public ActionResult<IEnumerable<LocationDto>> GetDesksByLocalization([FromQuery] string searchWord)
         {
-            var locations = _locationServices.GetLocations();
+            var locations = _locationServices.GetLocations(searchWord);
             return Ok(locations);
         }
 

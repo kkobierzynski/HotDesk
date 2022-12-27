@@ -9,7 +9,7 @@ namespace HotDesk.Services
 {
     public interface ILocationServices
     {
-        IEnumerable<LocationDto> GetLocations();
+        IEnumerable<LocationDto> GetLocations(string searchWord);
         int CreateLocation(AddLocationDto dto);
         LocationDto ReturnLocationById(int id);
         void DeleteLocation(int id);
@@ -28,10 +28,14 @@ namespace HotDesk.Services
 
 
 
-        public IEnumerable<LocationDto> GetLocations()
+        public IEnumerable<LocationDto> GetLocations(string searchWord)
         {
             var locations = _dbContext.Locations
                 .Include(location => location.Desks)
+                .Where(x => searchWord == null ||
+                x.Country.ToLower().Contains(searchWord.ToLower()) ||
+                x.City.ToLower().Contains(searchWord.ToLower()) ||
+                x.Address.ToLower().Contains(searchWord.ToLower()))
                 .ToList();
 
             var locationsDto = _mapper.Map<List<LocationDto>>(locations);
