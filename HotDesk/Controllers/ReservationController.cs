@@ -1,4 +1,5 @@
-﻿using HotDesk.Models;
+﻿using HotDesk.Entities;
+using HotDesk.Models;
 using HotDesk.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,8 +17,15 @@ namespace HotDesk.Controllers
             _reservationServices = reservationServices;
         }
 
+        [HttpGet("information/{locationId}")]
+        public ActionResult<List<ReservationDto>> AllReservationsInLocation([FromRoute] int locationId)
+        {
+            var reservations = _reservationServices.GetReservedByLocation(locationId);
+            return Ok(reservations);
+        }
+
         [HttpGet("{id}")]
-        public ActionResult GetReservation([FromRoute] int id)
+        public ActionResult<DeskBookDto> GetReservation([FromRoute] int id)
         {
             var reservation = _reservationServices.GetReservationById(id);
             return Ok(reservation);

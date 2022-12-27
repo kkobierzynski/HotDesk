@@ -11,6 +11,7 @@ namespace HotDesk.Services
         int MakeReservation(DeskBookDto dto);
         DeskBookDto GetReservationById(int id);
         void Update(int id, DeskBookDto dto);
+        IEnumerable<ReservationDto> GetReservedByLocation(int locationId);
     }
 
     public class ReservationServices : IReservationServices
@@ -37,6 +38,34 @@ namespace HotDesk.Services
 
             var reservationDto = _mapper.Map<DeskBookDto>(reservation);
             return reservationDto;
+        }
+
+        public IEnumerable<ReservationDto> GetReservedByLocation(int locationId)
+        {
+            var roles = _dbContext.Roles;
+            if (_dbContext.Locations.FirstOrDefault(x => x.Id == locationId) == null)
+            {
+                throw new NotFoundException("Location not found");
+            }
+
+            if (_contextAccesor.UserId == roles.FirstOrDefault(role => role.RoleName == "Administrator").Id)
+            {
+                var reservations = _dbContext.Reservations
+                .Include(res => res.User)
+                .Where(res => res.LocationId == locationId).ToList();
+
+                var reservationsDto = _mapper.Map<List<ReservationDto>>(reservations);
+                return reservationsDto;
+            }
+            else
+            {
+                var reservations = _dbContext.Reservations
+                .Where(res => res.LocationId == locationId).ToList();
+
+                var reservationsDto = _mapper.Map<List<ReservationDto>>(reservations);
+                return reservationsDto;
+            }
+
         }
 
         public void Update(int id, DeskBookDto dto)
