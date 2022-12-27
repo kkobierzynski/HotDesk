@@ -9,5 +9,6 @@
         public int LocationId { get; set; }
         public virtual Location Location { get; set; }
         public int UserId { get; set; }
+        public virtual User User { get; set; }
     }
 }
