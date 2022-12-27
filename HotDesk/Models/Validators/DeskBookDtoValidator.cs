@@ -1,12 +1,13 @@
 ﻿using FluentValidation;
 using HotDesk.Entities;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotDesk.Models.Validators
 {
     public class DeskBookDtoValidator : AbstractValidator<DeskBookDto>
     {
-        public DeskBookDtoValidator(HotDeskDbContext dbContext) 
+        public DeskBookDtoValidator(HotDeskDbContext dbContext, IActionContextAccessor actionContextAccessor) 
         {
             RuleFor(x => x.DeskId).NotEmpty();
             RuleFor(x => x.LocationId).NotEmpty();
@@ -25,10 +26,17 @@ namespace HotDesk.Models.Validators
                     context.AddFailure("EndDate", "Cannot reserve desk for more than one week");
                 }
 
+                var reservationId = actionContextAccessor.ActionContext?.RouteData.Values.GetValueOrDefault("id");
+                if(reservationId != null)
+                {
+                    reservationId = int.Parse(reservationId.ToString());
+                }                
+
                 //if the same desk was found between existing order date, cannot reserve
                 var isreserved = dbContext.Reservations
                     .FirstOrDefault(x => x.LocationId == value.LocationId &&
                                     x.DeskId == value.DeskId &&
+                                    x.Id != (int?)reservationId &&
                                         (endDate >= x.StartDate && endDate <= x.EndDate ||
                                         startDate >= x.StartDate && startDate <= x.EndDate ||
                                         startDate <= x.StartDate && endDate >= x.EndDate));

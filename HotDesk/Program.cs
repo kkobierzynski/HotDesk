@@ -1,3 +1,4 @@
+using FluentAssertions.Common;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using HotDesk;
@@ -7,6 +8,7 @@ using HotDesk.Models;
 using HotDesk.Models.Validators;
 using HotDesk.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
@@ -53,6 +55,7 @@ builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserDtoValidator>();
 builder.Services.AddScoped<IValidator<DeskBookDto>, DeskBookDtoValidator>();
 
+builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 builder.Services.AddScoped<IUserContextAccesorService, UserContextAccesorService>();
 builder.Services.AddHttpContextAccessor();
 
