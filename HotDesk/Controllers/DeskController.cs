@@ -16,6 +16,12 @@ namespace HotDesk.Controllers
         {
             _deskServices = deskServices;
         }
+        [HttpGet("/api/location/all/desk")]
+        public ActionResult<IEnumerable<DeskBookDto>> GetAvailableUnavailableDesk([FromQuery] string availability)
+        {
+            var deskDto = _deskServices.AvailableUnavailableDesk(availability);
+            return Ok(deskDto);
+        }
 
         [HttpGet("{deskId}")]
         public ActionResult<DeskDto> GetDesk([FromRoute] int id, [FromRoute] int deskId)
@@ -23,6 +29,7 @@ namespace HotDesk.Controllers
             var deskDto = _deskServices.GetDeskById(id,deskId);
             return Ok(deskDto);
         }
+
 
         [HttpPost]
         [Authorize(Roles = "Administrator")]

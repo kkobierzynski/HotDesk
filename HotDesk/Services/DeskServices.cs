@@ -11,6 +11,7 @@ namespace HotDesk.Services
         DeskDto GetDeskById(int locationId, int deskId);
         int CreateDesk(int locationId, AddDeskDto dto);
         void DeleteDesk(int locationId, int deskId);
+        IEnumerable<DeskDto> AvailableUnavailableDesk(string availability);
     }
     public class DeskServices : IDeskServices
     {
@@ -20,6 +21,31 @@ namespace HotDesk.Services
         {
             _dbContext = dbContext;
             _mapper = mapper;
+        }
+        public IEnumerable<DeskDto> AvailableUnavailableDesk(string availability)
+        {
+            var date = DateTime.Now;
+            date = new DateTime(date.Year, date.Month, date.Day);
+            var reservedIds = _dbContext.Reservations.Where(res => res.EndDate >= date).Select(res => res.DeskId).Distinct();
+
+            if (string.Equals(availability, "available", StringComparison.CurrentCultureIgnoreCase))
+            {
+                var desks = _dbContext.Desks.Where(x => !reservedIds.Contains(x.Id));
+                var desksDto = _mapper.Map<List<DeskDto>>(desks);
+                return desksDto;
+            }
+            else if (string.Equals(availability, "unavailable", StringComparison.CurrentCultureIgnoreCase))
+            {
+                var desks = _dbContext.Desks.Where(x => reservedIds.Contains(x.Id));
+                var desksDto = _mapper.Map<List<DeskDto>>(desks);
+                return desksDto;
+            }
+            else
+            {
+                throw new NotFoundException("Key value not found");
+            }
+
+
         }
 
         public DeskDto GetDeskById(int locationId, int deskId)
