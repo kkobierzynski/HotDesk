@@ -2,9 +2,11 @@
 
 ## Project description:
 Project aims to create RESTfull API using ASP.NET web API. API should enable making actions related to the automatic booking of desks in the office via the online system. The project has the following requirements:
+
 Administration:
 - Manage locations (add/remove, can't remove if desk exists in location)
 - Manage desk in locations (add/remove if no reservation/make unavailable)
+
 Employees
 - Determine which desks are available to book or unavailable.
 - Filter desks based on location
